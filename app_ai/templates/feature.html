@@ -1,0 +1,100 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Content Detector</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            position: relative;
+            min-height: 100vh;
+            margin: 0;
+            color: #000;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("{% static 'feature_image_backgnd.png' %}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            opacity: 0.3; /* transparency level */
+            z-index: -1; /* push behind content */
+        }
+
+        .container {
+            margin-top: 60px;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.9); /* slightly transparent content background */
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        .result {
+            font-size: 1.5rem;
+            margin-top: 20px;
+        }
+
+        .ai {
+            color: red;
+            font-weight: bold;
+        }
+
+        .human {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+    <a class="navbar-brand" href="{% url 'main' %}">AI Conetent Detector</a>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="{% url 'main' %}">Home</a></li>
+            <li class="nav-item"><a class="nav-link active" href="{% url 'detect' %}">AI Detection</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About Team</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Content -->
+<div class="container">
+    <h2 class="text-center mb-4">🤖 AI Content Detector</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Paste Text</label>
+            <textarea name="user_text" class="form-control" rows="8" placeholder="Enter or paste your text here...">{{ user_input }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Or Upload File (.txt, .docx, .pdf)</label>
+            <input type="file" name="user_file" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Detect</button>
+    </form>
+
+    {% if result %}
+    <div class="result text-center mt-4">
+        Detected as:
+        <span class="{% if 'AI Generated' in result %}ai{% else %}human{% endif %}">
+            {{ result }}
+        </span>
+    </div>
+    {% endif %}
+</div>
+
+</body>
+</html>
